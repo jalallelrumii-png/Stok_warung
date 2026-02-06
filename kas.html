@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#667eea">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Buku Kas Warung">
+    <title>Buku Kas Warung Digital</title>
+    <link rel="manifest" id="manifest-placeholder">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .install-prompt {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            padding: 15px 25px;
+            border-radius: 50px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            display: none;
+            align-items: center;
+            gap: 15px;
+            z-index: 9999;
+            animation: slideUp 0.3s ease;
+            max-width: 90%;
+        }
+        
+        .install-prompt.show {
+            display: flex;
+        }
+        
+        @keyframes slideUp {
+            from {
+                transform: translateX(-50%) translateY(100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(-50%) translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .install-prompt button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        
+        .install-prompt button:hover {
+            background: #5568d3;
+        }
+        
+        .install-prompt .close-btn {
+            background: #e0e0e0;
+            color: #666;
+            padding: 5px 12px;
+            font-size: 12px;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 25px;
+            font-size: 14px;
+        }
+        
+        .saldo-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        
+        .saldo-label {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+        
+        .saldo-amount {
+            font-size: 32px;
+            font-weight: bold;
+        }
+        
+        .ringkasan {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+        
+        .ringkasan-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .ringkasan-item.masuk {
+            border-left: 4px solid #28a745;
+        }
+        
+        .ringkasan-item.keluar {
+            border-left: 4px solid #dc3545;
+        }
+        
+        .ringkasan-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .ringkasan-value {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        .ringkasan-value.masuk {
+            color: #28a745;
+        }
+        
+        .ringkasan-value.keluar {
+            color: #dc3545;
+        }
+        
+        .form-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+        
+        .btn-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        
+        button {
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-masuk {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-masuk:hover {
+            background: #218838;
+        }
+        
+        .btn-keluar {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-keluar:hover {
+            background: #c82333;
+        }
+        
+        .btn-reset {
+            background: #6c757d;
+            color: white;
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        .btn-reset:hover {
+            background: #5a6268;
+        }
+        
+        .history-section {
+            margin-top: 30px;
+        }
+        
+        .history-title {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        
+        .transaksi-item {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .transaksi-info {
+            flex: 1;
+        }
+        
+        .transaksi-jenis {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .transaksi-jenis.masuk {
+            color: #28a745;
+        }
+        
+        .transaksi-jenis.keluar {
+            color: #dc3545;
+        }
+        
+        .transaksi-keterangan {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 3px;
+        }
+        
+        .transaksi-waktu {
+            font-size: 12px;
+            color: #999;
+        }
+        
+        .transaksi-jumlah {
+            font-size: 20px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        
+        .transaksi-jumlah.masuk {
+            color: #28a745;
+        }
+        
+        .transaksi-jumlah.keluar {
+            color: #dc3545;
+        }
+        
+        .btn-hapus {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .btn-hapus:hover {
+            background: #c82333;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+        
+        .empty-state svg {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 15px;
+            opacity: 0.3;
+        }
+    </style>
+</head>
+<body>
+    <!-- Install Prompt -->
+    <div class="install-prompt" id="installPrompt">
+        <span>📱 Install aplikasi ke home screen!</span>
+        <button onclick="installApp()">Install</button>
+        <button class="close-btn" onclick="closeInstallPrompt()">Nanti</button>
+    </div>
+
+    <div class="container">
+        <h1>💰 Buku Kas Warung Digital</h1>
+        <p class="subtitle">Catat Pemasukan & Pengeluaran dengan Mudah</p>
+        
+        <!-- Saldo Total -->
+        <div class="saldo-box">
+            <div class="saldo-label">Saldo Total</div>
+            <div class="saldo-amount" id="saldoTotal">Rp 0</div>
+        </div>
+        
+        <!-- Ringkasan Hari Ini -->
+        <div class="ringkasan">
+            <div class="ringkasan-item masuk">
+                <div class="ringkasan-label">Pemasukan Hari Ini</div>
+                <div class="ringkasan-value masuk" id="pemasukanHariIni">Rp 0</div>
+            </div>
+            <div class="ringkasan-item keluar">
+                <div class="ringkasan-label">Pengeluaran Hari Ini</div>
+                <div class="ringkasan-value keluar" id="pengeluaranHariIni">Rp 0</div>
+            </div>
+        </div>
+        
+        <!-- Form Input -->
+        <div class="form-section">
+            <div class="form-group">
+                <label for="jumlah">Jumlah (Rp)</label>
+                <input type="number" id="jumlah" placeholder="Masukkan jumlah..." required>
+            </div>
+            
+            <div class="form-group">
+                <label for="keterangan">Keterangan</label>
+                <textarea id="keterangan" placeholder="Contoh: Jual mie ayam 5 porsi"></textarea>
+            </div>
+            
+            <div class="btn-group">
+                <button class="btn-masuk" onclick="tambahTransaksi('masuk')">
+                    ➕ Pemasukan
+                </button>
+                <button class="btn-keluar" onclick="tambahTransaksi('keluar')">
+                    ➖ Pengeluaran
+                </button>
+            </div>
+            
+            <button class="btn-reset" onclick="resetData()">
+                🔄 Reset Semua Data
+            </button>
+        </div>
+        
+        <!-- History Transaksi -->
+        <div class="history-section">
+            <div class="history-title">📋 Riwayat Transaksi</div>
+            <div id="historyList"></div>
+        </div>
+    </div>
+
+    <script>
+        // PWA Install - FIXED VERSION
+        let deferredPrompt;
+        
+        // Create manifest dynamically
+        const manifestData = {
+            "name": "Buku Kas Warung Digital",
+            "short_name": "Buku Kas",
+            "start_url": "./",
+            "display": "standalone",
+            "background_color": "#ffffff",
+            "theme_color": "#667eea",
+            "icons": [
+                {
+                    "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='192' height='192' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' fill='%23667eea'/%3E%3Ctext x='50%25' y='50%25' font-size='80' text-anchor='middle' dy='.35em' fill='white' font-family='Arial'%3E💰%3C/text%3E%3C/svg%3E",
+                    "sizes": "192x192",
+                    "type": "image/svg+xml"
+                },
+                {
+                    "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='512' height='512' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' fill='%23667eea'/%3E%3Ctext x='50%25' y='50%25' font-size='250' text-anchor='middle' dy='.35em' fill='white' font-family='Arial'%3E💰%3C/text%3E%3C/svg%3E",
+                    "sizes": "512x512",
+                    "type": "image/svg+xml"
+                }
+            ]
+        };
+        
+        const stringManifest = JSON.stringify(manifestData);
+        const blob = new Blob([stringManifest], {type: 'application/json'});
+        const manifestURL = URL.createObjectURL(blob);
+        document.querySelector('#manifest-placeholder').setAttribute('href', manifestURL);
+        
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('installPrompt').classList.add('show');
+        });
+        
+        function installApp() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    deferredPrompt = null;
+                    document.getElementById('installPrompt').classList.remove('show');
+                });
+            }
+        }
+        
+        function closeInstallPrompt() {
+            document.getElementById('installPrompt').classList.remove('show');
+        }
+        
+        // Service Worker - SIMPLIFIED & FIXED
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                const swCode = `
+                    const CACHE_NAME = 'buku-kas-v1';
+                    
+                    self.addEventListener('install', (e) => {
+                        self.skipWaiting();
+                    });
+                    
+                    self.addEventListener('activate', (e) => {
+                        e.waitUntil(
+                            caches.keys().then(cacheNames => {
+                                return Promise.all(
+                                    cacheNames.map(cache => {
+                                        if (cache !== CACHE_NAME) {
+                                            return caches.delete(cache);
+                                        }
+                                    })
+                                );
+                            }).then(() => self.clients.claim())
+                        );
+                    });
+                    
+                    self.addEventListener('fetch', (e) => {
+                        e.respondWith(
+                            fetch(e.request).catch(() => {
+                                return caches.match(e.request);
+                            })
+                        );
+                    });
+                `;
+                
+                const blob = new Blob([swCode], { type: 'application/javascript' });
+                const swUrl = URL.createObjectURL(blob);
+                
+                navigator.serviceWorker.register(swUrl)
+                    .then(() => console.log('SW registered'))
+                    .catch(err => console.log('SW registration failed:', err));
+            });
+        }
+    
+        // Load data dari localStorage
+        let transaksiList = [];
+        
+        // Safe localStorage access
+        try {
+            const stored = localStorage.getItem('transaksiWarung');
+            transaksiList = stored ? JSON.parse(stored) : [];
+        } catch (e) {
+            console.error('localStorage error:', e);
+            transaksiList = [];
+        }
+        
+        // Format rupiah
+        function formatRupiah(angka) {
+            return 'Rp ' + angka.toLocaleString('id-ID');
+        }
+        
+        // Format tanggal
+        function formatTanggal(timestamp) {
+            const date = new Date(timestamp);
+            const options = { 
+                weekday: 'short', 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            };
+            return date.toLocaleDateString('id-ID', options);
+        }
+        
+        // Hitung saldo total
+        function hitungSaldo() {
+            let saldo = 0;
+            transaksiList.forEach(t => {
+                if (t.jenis === 'masuk') {
+                    saldo += t.jumlah;
+                } else {
+                    saldo -= t.jumlah;
+                }
+            });
+            return saldo;
+        }
+        
+        // Hitung pemasukan/pengeluaran hari ini
+        function hitungHariIni() {
+            const today = new Date().toDateString();
+            let masuk = 0;
+            let keluar = 0;
+            
+            transaksiList.forEach(t => {
+                const transaksiDate = new Date(t.timestamp).toDateString();
+                if (transaksiDate === today) {
+                    if (t.jenis === 'masuk') {
+                        masuk += t.jumlah;
+                    } else {
+                        keluar += t.jumlah;
+                    }
+                }
+            });
+            
+            return { masuk, keluar };
+        }
+        
+        // Update tampilan
+        function updateTampilan() {
+            try {
+                // Update saldo
+                document.getElementById('saldoTotal').textContent = formatRupiah(hitungSaldo());
+                
+                // Update ringkasan hari ini
+                const hariIni = hitungHariIni();
+                document.getElementById('pemasukanHariIni').textContent = formatRupiah(hariIni.masuk);
+                document.getElementById('pengeluaranHariIni').textContent = formatRupiah(hariIni.keluar);
+                
+                // Update history
+                const historyList = document.getElementById('historyList');
+                
+                if (transaksiList.length === 0) {
+                    historyList.innerHTML = `
+                        <div class="empty-state">
+                            <svg fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path>
+                                <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"></path>
+                            </svg>
+                            <p>Belum ada transaksi</p>
+                        </div>
+                    `;
+                } else {
+                    historyList.innerHTML = transaksiList.map((t, index) => `
+                        <div class="transaksi-item">
+                            <div class="transaksi-info">
+                                <div class="transaksi-jenis ${t.jenis}">
+                                    ${t.jenis === 'masuk' ? '📈 Pemasukan' : '📉 Pengeluaran'}
+                                </div>
+                                <div class="transaksi-keterangan">${t.keterangan || '-'}</div>
+                                <div class="transaksi-waktu">${formatTanggal(t.timestamp)}</div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <div class="transaksi-jumlah ${t.jenis}">
+                                    ${t.jenis === 'masuk' ? '+' : '-'}${formatRupiah(t.jumlah)}
+                                </div>
+                                <button class="btn-hapus" onclick="hapusTransaksi(${index})">🗑️</button>
+                            </div>
+                        </div>
+                    `).reverse().join('');
+                }
+            } catch (e) {
+                console.error('Update tampilan error:', e);
+            }
+        }
+        
+        // Tambah transaksi
+        function tambahTransaksi(jenis) {
+            try {
+                const jumlah = parseInt(document.getElementById('jumlah').value);
+                const keterangan = document.getElementById('keterangan').value;
+                
+                if (!jumlah || jumlah <= 0) {
+                    alert('Masukkan jumlah yang valid!');
+                    return;
+                }
+                
+                const transaksi = {
+                    jenis: jenis,
+                    jumlah: jumlah,
+                    keterangan: keterangan,
+                    timestamp: Date.now()
+                };
+                
+                transaksiList.push(transaksi);
+                localStorage.setItem('transaksiWarung', JSON.stringify(transaksiList));
+                
+                // Reset form
+                document.getElementById('jumlah').value = '';
+                document.getElementById('keterangan').value = '';
+                
+                updateTampilan();
+                
+                // Konfirmasi
+                alert(`✅ ${jenis === 'masuk' ? 'Pemasukan' : 'Pengeluaran'} ${formatRupiah(jumlah)} berhasil ditambahkan!`);
+            } catch (e) {
+                console.error('Tambah transaksi error:', e);
+                alert('Terjadi kesalahan. Silakan coba lagi.');
+            }
+        }
+        
+        // Hapus transaksi
+        function hapusTransaksi(index) {
+            try {
+                if (confirm('Yakin ingin menghapus transaksi ini?')) {
+                    transaksiList.splice(transaksiList.length - 1 - index, 1);
+                    localStorage.setItem('transaksiWarung', JSON.stringify(transaksiList));
+                    updateTampilan();
+                }
+            } catch (e) {
+                console.error('Hapus transaksi error:', e);
+                alert('Terjadi kesalahan. Silakan coba lagi.');
+            }
+        }
+        
+        // Reset data
+        function resetData() {
+            try {
+                if (confirm('⚠️ PERHATIAN!\n\nIni akan menghapus SEMUA data transaksi!\nYakin ingin melanjutkan?')) {
+                    if (confirm('Konfirmasi sekali lagi: Hapus semua data?')) {
+                        transaksiList = [];
+                        localStorage.removeItem('transaksiWarung');
+                        updateTampilan();
+                        alert('✅ Semua data berhasil dihapus!');
+                    }
+                }
+            } catch (e) {
+                console.error('Reset data error:', e);
+                alert('Terjadi kesalahan. Silakan coba lagi.');
+            }
+        }
+        
+        // Inisialisasi
+        try {
+            updateTampilan();
+        } catch (e) {
+            console.error('Initialization error:', e);
+        }
+    </script>
+</body>
+</html>
