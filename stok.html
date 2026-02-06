@@ -3,57 +3,103 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kas Harian</title>
+  <title>Catatan Kas Harian</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #ffffff;
+      background: #f4f6f8;
       padding: 20px;
     }
     h1 {
       text-align: center;
     }
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin: 5px 0;
+      font-size: 16px;
+    }
+    button {
+      background: #2ecc71;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 20px;
+      margin-top: 15px;
+      background: white;
     }
     th, td {
       border: 1px solid #ccc;
-      padding: 10px;
+      padding: 8px;
       text-align: center;
     }
     th {
-      background: #f0f0f0;
+      background: #eee;
     }
     a {
-      display: inline-block;
-      margin-top: 20px;
-      text-decoration: none;
-      color: #3498db;
+      display: block;
+      margin-top: 15px;
+      text-align: center;
     }
   </style>
 </head>
 <body>
 
-  <h1>💰 Catatan Kas Harian</h1>
+<h1>💰 Catatan Kas Harian</h1>
 
-  <table>
+<input type="date" id="tanggal">
+<input type="text" id="keterangan" placeholder="Keterangan (contoh: Penjualan)">
+<input type="number" id="masuk" placeholder="Uang Masuk">
+<input type="number" id="keluar" placeholder="Uang Keluar">
+
+<button onclick="tambahData()">Tambah</button>
+
+<table>
+  <thead>
     <tr>
       <th>Tanggal</th>
       <th>Keterangan</th>
       <th>Masuk</th>
       <th>Keluar</th>
     </tr>
-    <tr>
-      <td>06-02-2026</td>
-      <td>Penjualan</td>
-      <td>50.000</td>
-      <td>-</td>
-    </tr>
-  </table>
+  </thead>
+  <tbody id="tabelKas"></tbody>
+</table>
 
-  <a href="index.html">⬅ Kembali ke Menu</a>
+<a href="index.html">⬅ Kembali ke Menu</a>
+
+<script>
+function tambahData() {
+  const tanggal = document.getElementById("tanggal").value;
+  const ket = document.getElementById("keterangan").value;
+  const masuk = document.getElementById("masuk").value;
+  const keluar = document.getElementById("keluar").value;
+
+  if (!tanggal || !ket) {
+    alert("Tanggal dan keterangan wajib diisi!");
+    return;
+  }
+
+  const row = 
+    <tr>
+      <td>${tanggal}</td>
+      <td>${ket}</td>
+      <td>${masuk || "-"}</td>
+      <td>${keluar || "-"}</td>
+    </tr>
+  ;
+
+  document.getElementById("tabelKas").innerHTML += row;
+
+  document.getElementById("tanggal").value = "";
+  document.getElementById("keterangan").value = "";
+  document.getElementById("masuk").value = "";
+  document.getElementById("keluar").value = "";
+}
+</script>
 
 </body>
 </html>
