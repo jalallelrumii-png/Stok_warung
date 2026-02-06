@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Manajemen Stok Toko</title>
+<title>Stok Barang Toko</title>
 
 <style>
 body {
   font-family: Arial, sans-serif;
-  background: #f7f7f7;
+  background: #f4f4f4;
   padding: 15px;
 }
 
@@ -16,43 +16,35 @@ h1 {
   text-align: center;
 }
 
+input, button {
+  width: 100%;
+  padding: 10px;
+  margin: 5px 0;
+  font-size: 16px;
+}
+
+button {
+  background: #2ecc71;
+  border: none;
+  color: white;
+  font-weight: bold;
+}
+
 table {
   width: 100%;
+  margin-top: 15px;
   border-collapse: collapse;
   background: white;
 }
 
 th, td {
-  border: 1px solid #ddd;
+  border: 1px solid #ccc;
   padding: 8px;
   text-align: center;
 }
 
 th {
-  background: #222;
-  color: white;
-}
-
-input {
-  width: 100%;
-  padding: 6px;
-  box-sizing: border-box;
-}
-
-button {
-  margin-top: 10px;
-  padding: 10px;
-  width: 100%;
-  border: none;
-  background: #111;
-  color: white;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-.total {
-  font-weight: bold;
-  background: #e8ffe8;
+  background: #eee;
 }
 </style>
 </head>
@@ -61,54 +53,43 @@ button {
 
 <h1>📦 Catatan Stok Barang</h1>
 
-<table id="stokTable">
+<input type="text" id="nama" placeholder="Nama barang">
+<input type="number" id="stok" placeholder="Jumlah stok">
+
+<button onclick="tambah()">➕ Tambah Barang</button>
+
+<table>
 <thead>
 <tr>
+  <th>No</th>
   <th>Nama Barang</th>
-  <th>Stok Awal</th>
-  <th>Masuk</th>
-  <th>Keluar</th>
-  <th>Sisa</th>
+  <th>Stok</th>
 </tr>
 </thead>
-
-<tbody>
-<tr>
-  <td><input placeholder="Contoh: Panci"></td>
-  <td><input type="number" value="0"></td>
-  <td><input type="number" value="0"></td>
-  <td><input type="number" value="0"></td>
-  <td class="total">0</td>
-</tr>
-</tbody>
+<tbody id="data"></tbody>
 </table>
 
-<button onclick="tambahBaris()">➕ Tambah Barang</button>
-
 <script>
-function hitung() {
-  const rows = document.querySelectorAll("#stokTable tbody tr");
-  rows.forEach(row => {
-    const awal = row.children[1].children[0].value || 0;
-    const masuk = row.children[2].children[0].value || 0;
-    const keluar = row.children[3].children[0].value || 0;
-    row.children[4].innerText =
-      parseInt(awal) + parseInt(masuk) - parseInt(keluar);
-  });
-}
+let no = 1;
 
-document.addEventListener("input", hitung);
+function tambah() {
+  const nama = document.getElementById("nama").value;
+  const stok = document.getElementById("stok").value;
 
-function tambahBaris() {
-  const tbody = document.querySelector("#stokTable tbody");
-  const row = tbody.insertRow();
-  row.innerHTML = 
-    <td><input></td>
-    <td><input type="number" value="0"></td>
-    <td><input type="number" value="0"></td>
-    <td><input type="number" value="0"></td>
-    <td class="total">0</td>
-  ;
+  if (nama === "" || stok === "") {
+    alert("Isi nama dan stok!");
+    return;
+  }
+
+  const tabel = document.getElementById("data");
+  const row = tabel.insertRow();
+
+  row.insertCell(0).innerText = no++;
+  row.insertCell(1).innerText = nama;
+  row.insertCell(2).innerText = stok;
+
+  document.getElementById("nama").value = "";
+  document.getElementById("stok").value = "";
 }
 </script>
 
